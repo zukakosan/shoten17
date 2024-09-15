@@ -1,0 +1,76 @@
+{
+    "mode": "All",
+    "parameters": {
+        "blockedports": {
+            "type": "Array",
+            "metadata": {
+                "displayName": "blocked ports",
+                "description": "The list of ports to block"
+            },
+            "defaultValue": [
+                "*",
+                "22",
+                "3389"
+            ]
+        }
+    },
+    "policyRule": {
+        "if": {
+            "allOf": [
+                {
+                    "field": "type",
+                    "equals": "Microsoft.Network/networkSecurityGroups/securityRules"
+                },
+                {
+                    "allOf": [
+                        {
+                            "field": "Microsoft.Network/networkSecurityGroups/securityRules/access",
+                            "equals": "Allow"
+                        },
+                        {
+                            "field": "Microsoft.Network/networkSecurityGroups/securityRules/direction",
+                            "equals": "Inbound"
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange",
+                                    "in": "[parameters('blockedports')]"
+                                },
+                                {
+                                    "not": {
+                                        "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRanges[*]",
+                                        "in": "[parameters('blockedports')]"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "anyOf": [
+                                {
+                                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefix",
+                                    "in": [
+                                        "*",
+                                        "Internet",
+                                        "0.0.0.0/0"
+                                    ]
+                                },
+                                {
+                                    "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefixes[*]",
+                                    "in": [
+                                        "*",
+                                        "Internet",
+                                        "0.0.0.0/0"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "then": {
+            "effect": "deny"
+        }
+    }
+}
