@@ -12,6 +12,18 @@
                 "22",
                 "3389"
             ]
+        },
+        "blockedaddresses": {
+            "type": "Array",
+            "metadata": {
+                "displayName": "blocked addresses",
+                "description": "The list of addresses to block"
+            },
+            "defaultValue": [
+                "*",
+                "Internet",
+                "0..0.0.0/0"
+            ]
         }
     },
     "policyRule": {
@@ -49,19 +61,11 @@
                             "anyOf": [
                                 {
                                     "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefix",
-                                    "in": [
-                                        "*",
-                                        "Internet",
-                                        "0.0.0.0/0"
-                                    ]
+                                    "in": "[parameters('blockedaddresses')]"
                                 },
                                 {
                                     "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefixes[*]",
-                                    "in": [
-                                        "*",
-                                        "Internet",
-                                        "0.0.0.0/0"
-                                    ]
+                                    "in": "[parameters('blockedaddresses')]"
                                 }
                             ]
                         }
