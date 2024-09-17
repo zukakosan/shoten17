@@ -1,0 +1,63 @@
+{
+	"mode": "All",
+	"parameters": {
+		"excludedSubnets": {
+			"type": "Array",
+			"metadata": {
+				"displayName": "Excluded subnets",
+				"description": "The list of subnet names to exclude from the policy"
+			},
+			"defaultValue": [
+				"GatewaySubnet",
+				"AzureFirewallSubnet",
+				"AzureFirewallManagementSubnet",
+				"YourCustomSubnet"
+			]
+		}
+	},
+	"policyRule": {
+		"if": {
+			"anyOf": [
+				{
+					"allOf": [
+						{
+							"field": "type",
+							"equals": "Microsoft.Network/virtualNetworks"
+						},
+						{
+							"not": {
+								"field": "Microsoft.Network/virtualNetworks/subnets[*].networkSecurityGroup.id",
+								"exists": true
+							}
+						},
+						{
+							"field": "Microsoft.Network/virtualNetworks/subnets[*].name",
+							"notIn": "[parameters('excludedSubnets')]"
+						}
+					]
+				},
+				{
+					"allOf": [
+						{
+							"field": "type",
+							"equals": "Microsoft.Network/virtualNetworks/subnets"
+						},
+						{
+							"not": {
+								"field": "Microsoft.Network/virtualNetworks/subnets/networkSecurityGroup.id",
+								"exists": true
+							}
+						},
+						{
+							"field": "name",
+							"notIn": "[parameters('excludedSubnets')]"
+						}
+					]
+				}
+			]
+		},
+		"then": {
+			"effect": "deny"
+		}
+	}
+}
