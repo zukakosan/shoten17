@@ -25,14 +25,14 @@
 							"equals": "Microsoft.Network/virtualNetworks"
 						},
 						{
+							"field": "Microsoft.Network/virtualNetworks/subnets[*].name",
+							"notIn": "[parameters('excludedSubnets')]"
+						},
+						{
 							"not": {
 								"field": "Microsoft.Network/virtualNetworks/subnets[*].networkSecurityGroup.id",
 								"exists": true
 							}
-						},
-						{
-							"field": "Microsoft.Network/virtualNetworks/subnets[*].name",
-							"notIn": "[parameters('excludedSubnets')]"
 						}
 					]
 				},
@@ -43,14 +43,14 @@
 							"equals": "Microsoft.Network/virtualNetworks/subnets"
 						},
 						{
+							"field": "name",
+							"notIn": "[parameters('excludedSubnets')]"
+						},
+						{
 							"not": {
 								"field": "Microsoft.Network/virtualNetworks/subnets/networkSecurityGroup.id",
 								"exists": true
 							}
-						},
-						{
-							"field": "name",
-							"notIn": "[parameters('excludedSubnets')]"
 						}
 					]
 				}
